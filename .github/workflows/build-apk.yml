@@ -1,25 +1,31 @@
 name: Build Modern Shift Calendar APK
 
 on:
-  push:
-    branches: [ main, master ]
-  workflow_dispatch:
+push:
+branches: [ main, master ]
+workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+build:
+runs-on: ubuntu-latest
+steps:
+- name: Checkout repository
+uses: actions/checkout@v4
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+  - name: Set up JDK 17
+    uses: actions/setup-java@v4
+    with:
+      java-version: '17'
+      distribution: 'temurin'
 
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon
+  - name: Install Gradle 8.5 and Build Debug APK
+    run: |
+      wget -q https://services.gradle.org/distributions/gradle-8.5-bin.zip
+      unzip -q gradle-8.5-bin.zip -d /tmp
+      /tmp/gradle-8.5/bin/gradle assembleDebug --no-daemon
 
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: 4조3교대_최신달력_위젯_APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+  - name: Upload APK Artifact
+    uses: actions/upload-artifact@v4
+    with:
+      name: 4조3교대_최신달력_위젯_APK
+      path: app/build/outputs/apk/debug/app-debug.apk
